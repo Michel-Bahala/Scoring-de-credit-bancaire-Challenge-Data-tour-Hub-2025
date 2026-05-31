@@ -47,6 +47,5 @@ Pour sécuriser le Top 5% du classement, le pipeline a basculé vers une approch
 └── README.md                   # Documentation du projet
 
 
-git clone [https://github.com/votre-username/credit-scoring-data-tour-2025.git](https://github.com/votre-username/credit-scoring-data-tour-2025.git)
-cd credit-scoring-data-tour-2025
+git clone https://github.com/Michel-Bahala/Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025.git
 pip install -r requirements.txt
