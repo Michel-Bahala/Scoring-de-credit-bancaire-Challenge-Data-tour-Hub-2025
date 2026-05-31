@@ -7,7 +7,7 @@
 Ce dépôt héberge l'architecture de Machine Learning de bout en bout développée pour le prestigieux hackathon panafricain **Data Tour Hub 2025**. Le projet se concentre sur le **scoring de crédit bancaire**, un cas d'usage critique pour atténuer le risque de défaut tout en favorisant l'inclusion financière.
 
 ### 🎯 Faits Marquants & Performance
-* **Classement :** **9ème place sur 195 équipes** internationales inscrites (Top 5%).
+* **Classement :** **9ème place sur 195 équipes** nationales inscrites (Top 5%).
 * **Rôle :** Représentant officiel de la République Démocratique du Congo (RDC) 🇨🇩.
 * **Métrique Métier & Technique :** Optimisation stricte du **ROC-AUC** sur un dataset massif et équilibré de **192 000 lignes et 59 features**.
 
