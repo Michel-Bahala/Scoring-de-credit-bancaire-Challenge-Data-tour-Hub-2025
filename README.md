@@ -2,7 +2,7 @@
 
 [![ML Pipeline](https://img.shields.io/badge/Pipeline-AutoML%20%26%20Ensembling-blue.svg)](#)
 [![Rank](https://img.shields.io/badge/Rank-9th%20%2F%20195%20%20(Top%205%25)-goldenrod.svg)](#)
-[![Region](https://img.shields.io/badge/Representing-DR%20Congo%20%F0%9F%87%A8%F0%9F%87%AC-red.svg)](#)
+
 
 Ce dépôt héberge l'architecture de Machine Learning de bout en bout développée pour le prestigieux hackathon panafricain **Data Tour Hub 2025**. Le projet se concentre sur le **scoring de crédit bancaire**, un cas d'usage critique pour atténuer le risque de défaut tout en favorisant l'inclusion financière.
 
