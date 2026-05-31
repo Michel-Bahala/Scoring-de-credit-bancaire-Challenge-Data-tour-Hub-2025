@@ -50,7 +50,7 @@ Pour sécuriser le Top 5% du classement, le pipeline a basculé vers une approch
 
 Pour cloner le projet et installer toutes les dépendances nécessaires, exécutez les commandes suivantes dans votre terminal :
 
-```bash
+* **bash**
 git clone [https://github.com/Michel-Bahala/Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025.git](https://github.com/Michel-Bahala/Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025.git)
 cd Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025
 pip install -r requirements.txt
