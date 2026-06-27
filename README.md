@@ -9,48 +9,76 @@ Ce dépôt héberge l'architecture de Machine Learning de bout en bout développ
 ### 🎯 Faits Marquants & Performance
 * **Classement :** **9ème place sur 195 équipes** nationales inscrites (Top 5%).
 * **Rôle :** Représentant officiel de la République Démocratique du Congo (RDC) 🇨🇩.
-* **Métrique Métier & Technique :** Optimisation stricte du **ROC-AUC** sur un dataset massif de **192 000 lignes et 59 features**.
+* **Métrique Technique :** Optimisation stricte de l'**Area Under the ROC Curve (ROC-AUC)**, atteignant un score de validation d'environ **0.786**.
+* **Volume de Données :** Gestion d'un volume massif à l'échelle industrielle (Big Data).
 
 ---
 
-## 💼 Problématique Métier & Enjeux
-Accorder un crédit implique une évaluation précise du profil de risque de l'emprunteur. Un modèle trop conservateur freine la croissance de la banque ; un modèle trop laxiste engendre des créances douteuses. 
+## 🎯 Objectif du Projet & Enjeux Métier
+Accorder un crédit implique une évaluation précise du profil de risque de l'emprunteur. Un modèle trop conservateur freine la croissance de la banque ; un modèle trop laxiste engendre des créances douteuses (*Non-Performing Loans*). 
 
-L'objectif de ce projet était de concevoir un algorithme capable de classifier les demandes de crédit avec une haute fidélité, capable de maintenir ses performances en production (généralisation face à la variance).
-
----
-
-## 🛠️ Approche Technique & Architecture du Pipeline
-
-L'ingénierie de ce projet a été segmentée en deux phases distinctes, simulant un cycle de R&D jusqu'à la mise en production :
-
-### Phase 1 : Exploration & Tuning Fin (Baseline)
-* **Modèle :** LightGBM (Light Gradient Boosting Machine).
-* **Framework d'Optimisation :** Recherche d'hyperparamètres bayésienne via **Optuna** (`num_leaves`, `learning_rate`, `max_depth`).
-* *Limitation identifiée :* Un modèle unique, même parfaitement optimisé, atteint un biais algorithmique structurel.
-
-### Phase 2 : Industrialisation & Ensembling (`FINAL_PIPELINE.ipynb`)
-Pour sécuriser le Top 5% du classement, le pipeline a basculé vers une approche d'**AutoML robuste avec AutoGluon** :
-1. **Multi-layer Stacking :** Entraînement et empilement vertical de plusieurs familles d'algorithmes (XGBoost, CatBoost, LightGBM, Random Forests).
-2. **K-Fold Bagging Intégré :** Élimination du risque de surapprentissage (*overfitting*) sur le jeu de validation.
-3. **Analyse de Calibration :** Post-traitement rigoureux avec tracé de la distribution des probabilités prédites (`y_pred_proba`) pour ajuster dynamiquement le seuil de décision métier.
-4. **Gestion de la Mémoire :** Utilisation intensive de garbage collection (`gc.collect()`) pour garantir la stabilité du pipeline sur des infrastructures contraintes.
+L'objectif principal était de concevoir un algorithme robuste capable de classifier les demandes de crédit en temps réel (Classification binaire : Solvable `0` vs Insolvable `1`), tout en maintenant ses performances de généralisation face à la variance de l'environnement de production.
 
 ---
 
-## 📦 Structure du Projet
+## 🛠️ Approche Technique & Pipeline d'Ingénierie
 
-```text
-├── FINAL_PIPELINE.ipynb       # Pipeline final de production (AutoML & Ensembling)
-├── SUBMISSION_CAN_2025.ipynb  # Laboratoire d'expérimentation et tuning (Optuna + LightGBM)
-├── requirements.txt           # Fichier d'environnement pour la reproductibilité
-└── README.md                  # Documentation du projet
+L'ingénierie de ce projet a été scindée en phases stratégiques, simulant un cycle complet de R&D jusqu'à la mise en production sur des infrastructures contraintes.
 
+### 1. Préparation de la Donnée & Gestion du "Class Imbalance"
+* **Échelle des données :** Le jeu d'entraînement comptait plus d'un million de lignes, et le jeu de test final s'élevait à **3 572 662 lignes pour 60 caractéristiques**.
+* **Stratégie d'Under-sampling :** Face à un fort déséquilibre des classes (les cas d'insolvabilité étant minoritaires) et pour éviter les plantages de mémoire vive (`Out Of Memory`), un échantillonnage rigoureux à **50/50** a été appliqué :
+  ```python
+  train[train["flag"] == 0].sample(120000, random_state=42)  # Classe Majoritaire
+  train[train["flag"] == 1].sample(120000, random_state=42)  # Classe Minoritaire
+  Cela a permis d'entraîner les algorithmes sur un sous-ensemble parfaitement équilibré de 240 000 entrées, garantissant un apprentissage impartial des motifs de défaut de paiement.
+
+Feature Engineering & Réduction de dimension : Prétraitement avancé des variables catégorielles, imputation des valeurs manquantes et application d'une Analyse en Composantes Principales (PCA) pour capturer la variance essentielle sans surcharger les modèles.
+
+2. Phase d'Exploration & Tuning Fin (Baseline)
+Modèle : LightGBM (Light Gradient Boosting Machine).
+
+Framework d'Optimisation : Recherche d'hyperparamètres bayésienne via Optuna (num_leaves, learning_rate, max_depth, min_child_samples).
+
+Limitation : Un modèle unique, même parfaitement optimisé, atteint un biais algorithmique structurel.
+
+3. Phase d'Industrialisation & Stacking Multi-niveaux (FINAL_PIPELINE.ipynb)
+Pour sécuriser notre place au Top 5% du classement, le pipeline a basculé vers une approche d'AutoML robuste exploitant le framework AutoGluon :
+
+Multi-layer Stacking (Architecture Multi-niveaux) : Entraînement et empilement vertical de plusieurs familles d'algorithmes complémentaires :
+
+Modèles d'Arbres : LightGBM, CatBoost, XGBoost, Random Forests.
+
+Deep Learning (Réseaux de Neurones) : Intégration de couches denses NN_TORCH (PyTorch) et de réseaux tabulaires FastAI optimisés avec des couches d'intégration (embeddings) pour les variables catégorielles.
+
+K-Fold Bagging Intégré : Élimination du risque de surapprentissage (overfitting) en entraînant des variantes de modèles sur différentes partitions des données.
+
+Gestion de la Mémoire : Utilisation intensive de la libération manuelle de mémoire (gc.collect()) pour traiter efficacement l'inférence des 3,57 millions de lignes de test sur une infrastructure standard.
+
+📈 Résultats et Métriques
+Le modèle final combine la puissance des architectures d'arbres de décision et des réseaux de neurones profonds. En optimisant directement la métrique ROC-AUC, le système garantit :
+
+Une excellente distinction entre un client sain et un client à risque (Score de Validation : ~0.786).
+
+Une stabilité parfaite lors du passage à l'échelle face à des millions de requêtes d'inférence (Jeu de test validé avec succès).
+
+📦 Structure du Projet
+Plaintext
+├── FINAL_PIPELINE.ipynb      # Pipeline final de production (AutoML, Inférence Big Data & Ensembling)
+├── SUBMISSION_CAN_2025.ipynb  # Laboratoire d'expérimentation, échantillonnage et tuning (Optuna + LightGBM)
+├── requirements.txt          # Fichier d'environnement pour assurer la reproductibilité absolue
+└── README.md                 # Documentation complète du projet
 🚀 Installation et Utilisation
-
 Pour cloner le projet et installer toutes les dépendances nécessaires, exécutez les commandes suivantes dans votre terminal :
 
-bash
+Bash
+# Clonage du dépôt
 git clone [https://github.com/Michel-Bahala/Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025.git](https://github.com/Michel-Bahala/Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025.git)
+
+# Accès au répertoire
 cd Scoring-de-credit-bancaire-Clallenge-Data-tour-Hub-2025
+
+# Installation des dépendances (Pandas, NumPy, Scikit-learn, LightGBM, Optuna, AutoGluon, PyTorch, etc.)
 pip install -r requirements.txt
+
+  
