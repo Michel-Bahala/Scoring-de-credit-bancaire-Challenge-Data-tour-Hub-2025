@@ -35,34 +35,32 @@ L'ingénierie de ce projet a été scindée en phases stratégiques, simulant un
 
 Feature Engineering & Réduction de dimension : Prétraitement avancé des variables catégorielles, imputation des valeurs manquantes et application d'une Analyse en Composantes Principales (PCA) pour capturer la variance essentielle sans surcharger les modèles.
 
-2. Phase d'Exploration & Tuning Fin (Baseline)
+# 2. Phase d'Exploration & Tuning Fin (Baseline)
 Modèle : LightGBM (Light Gradient Boosting Machine).
 
 Framework d'Optimisation : Recherche d'hyperparamètres bayésienne via Optuna (num_leaves, learning_rate, max_depth, min_child_samples).
 
 Limitation : Un modèle unique, même parfaitement optimisé, atteint un biais algorithmique structurel.
 
-3. Phase d'Industrialisation & Stacking Multi-niveaux (FINAL_PIPELINE.ipynb)
+# 3. Phase d'Industrialisation & Stacking Multi-niveaux (FINAL_PIPELINE.ipynb)
 Pour sécuriser notre place au Top 5% du classement, le pipeline a basculé vers une approche d'AutoML robuste exploitant le framework AutoGluon :
 
 Multi-layer Stacking (Architecture Multi-niveaux) : Entraînement et empilement vertical de plusieurs familles d'algorithmes complémentaires :
 
 Modèles d'Arbres : LightGBM, CatBoost, XGBoost, Random Forests.
 
-Deep Learning (Réseaux de Neurones) : Intégration de couches denses NN_TORCH (PyTorch) et de réseaux tabulaires FastAI optimisés avec des couches d'intégration (embeddings) pour les variables catégorielles.
-
 K-Fold Bagging Intégré : Élimination du risque de surapprentissage (overfitting) en entraînant des variantes de modèles sur différentes partitions des données.
 
 Gestion de la Mémoire : Utilisation intensive de la libération manuelle de mémoire (gc.collect()) pour traiter efficacement l'inférence des 3,57 millions de lignes de test sur une infrastructure standard.
 
-📈 Résultats et Métriques
+# 📈 Résultats et Métriques
 Le modèle final combine la puissance des architectures d'arbres de décision et des réseaux de neurones profonds. En optimisant directement la métrique ROC-AUC, le système garantit :
 
 Une excellente distinction entre un client sain et un client à risque (Score de Validation : ~0.786).
 
 Une stabilité parfaite lors du passage à l'échelle face à des millions de requêtes d'inférence (Jeu de test validé avec succès).
 
-📦 Structure du Projet
+# 📦 Structure du Projet
 Plaintext
 ├── FINAL_PIPELINE.ipynb      # Pipeline final de production (AutoML, Inférence Big Data & Ensembling)
 ├── SUBMISSION_CAN_2025.ipynb  # Laboratoire d'expérimentation, échantillonnage et tuning (Optuna + LightGBM)
